@@ -1,0 +1,238 @@
+<html>
+  <head>
+    <title>Spexbingo</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .max-container {
+        height: 100vh;
+        display: grid;
+        grid-template-rows: 1fr auto 1fr;
+        grid-template-columns: auto;
+      }
+      .header {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-size: 2rem;
+      }
+      .footer {
+        height: 100%;
+      }
+      .bingo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .bingo-brick {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+        width: 80vw;
+        height: 80vw;
+        max-width: 800px;
+        max-height: 800px;
+      }
+
+      .node {
+        width: calc(100%-10px);
+        height: calc(100%-10px);
+        border: 0.5px solid #555;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 5px;
+        font-size: 1.5rem;
+        background-color: #ddd;
+        text-align: center;
+      }
+
+      .node.marked {
+        background-color: lime;
+      }
+
+      .node input {
+        width: 100%;
+        font-size: 1.5rem;
+        text-align: center;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="max-container">
+      <div class="header">
+        <img src="./luva.svg" alt="Kårspexluva">
+        <h1>Hitta en person som:</h1>
+      </div>
+      <div class="bingo-container">
+        <div class="bingo-brick"></div>
+      </div>
+      <div class="footer"></div>
+    </div>
+    <script>
+      const bingoBrick = document.querySelector(".bingo-brick");
+
+      const fullList = [
+        "Är allergisk mot nötter?",
+        "Är en badkruka?",
+        "Är i ett förhållande?",
+        "Är rädd för ormar?",
+        "Är vegan?",
+        "Bor hemma hos föräldrarna?",
+        "Bor i ett gult hus?",
+        "Bor i Linköping?",
+        "Började inte plugga direkt efter gymnasiet?",
+        "Färgat/blekt håret?",
+        "Föredrar fisk över kyckling?",
+        "Föredrar pepsi över coca­cola?",
+        "Gillar Doctor Who?",
+        "Gillar Game of Thrones?",
+        "Gillar inte lakrits?",
+        "Gillar kaffe?",
+        "Gillar lakrits?",
+        "Gillar oliver?",
+        "Gillar Stargate?",
+        "Han gå på händer?",
+        "Har åkt längdskidor?",
+        "Har åkt snowboard?",
+        "Har aldrig rökt?",
+        "Har aldrig snusat?",
+        "Har analys i envaribel­boken hemma i bokhyllan?",
+        "Har använt en brandsläckare?",
+        "Har balkong?",
+        "Har blivit jagad av en getabock?",
+        "Har bott i minst 3 olika länder?",
+        "Har bott på minst tre olika platser?",
+        "Har bott på tre olika platser?",
+        "Har en balkong?",
+        "Har en cykel i Stockholm?",
+        "Har en tatuering?",
+        "Har ett husdjur?",
+        "Har fler än två syskon?",
+        "Har flugit över 9 timmar (ett tillfälle)?",
+        "Har gått på Åva Gymnasium?",
+        "Har inte engagerat sig i mottagningen på sin sektion?",
+        "Har inte varit på Tom­Tits?",
+        "Har inte varit på Tom­Tits?",
+        "Har jobbat i sommar?",
+        "Har jobbat på tivoli?",
+        "Har klappat en ko?",
+        "Har körkort?",
+        "Har mönstrat på båt?",
+        "Har något grönt på sig?",
+        "Har något rött på sig?",
+        "Har piercing (förutom hål i öronen)?",
+        "Har rakat håret på halva huvudet?",
+        "Har ridit något djur?",
+        "Har sett 10 olika Kårspex live?",
+        "Har sett Chicago live?",
+        "Har sett en pingvin?",
+        "Har sett gävlebocken nerbrunnen?",
+        "Har sett Mamma Mia live?",
+        "Har sett mer än 10 musikaler?",
+        "Har spelat i storband?",
+        "Har sprungit ett maraton?",
+        "Har testat snus?",
+        "Har trädgård hemma?",
+        "Har tränat i 24 timmar i sträck?",
+        "Har tränat kampsport?",
+        "Har varit i Danmark?",
+        "Har varit i minst 10 länder?",
+        "Har varit i Norge?",
+        "Har varit med i andra spex än Kårspexet?",
+        "Har varit med i Quarnevalen?",
+        "Har varit med i sin sektions mottagning?",
+        "Har varit med i storband?",
+        "Har varit med på Spex­SM?",
+        "Har varit på en julkonsert?",
+        "Har varit på en sommargrillning i år?",
+        "Har varit på festival?",
+        "Har varit på Liseberg?",
+        "Har varit på tre kontinenter?",
+        "Har varit utomlands i sommar?",
+        "Har vunnit på lotteri (t.ex. stånden på grönalund)?",
+        "Inte har engagerat sig i mottagningen på sin sektion?",
+        "Kan gå på händer?",
+        "Kan japanska?",
+        "Kan kinesiska?",
+        "Kan segla?",
+        "Kan slicka sig själv på nästippen?",
+        "Kan spela ett instrument?",
+        "Kommer inte från Stockholm?",
+        "Setts på TV av flera miljoner?",
+        "Som har varit på en sommargrillning i år?",
+        "Spelar bridge?",
+        "Talar fler språk än svenska och engelska?",
+        "Tycker inte om kaffe?",
+        "Tycker inte om mint?",
+        "Tycker om att baka?",
+        "Tycker om att klättra?",
+        "Tycker om att laga mat?",
+        "Vet varför berget i QM­förrådet är rödmålat?"
+        ].map(str => ({
+          question: str,
+          answer: ""
+        }))
+      let list;
+
+      if (localStorage.getItem("data")) {
+        list = JSON.parse(localStorage.getItem("data"));
+      } else {
+        list = fullList
+          .map(x => ({v: Math.random(), x: x}))
+          .sort((a, b) => a.v - b.v)
+          .map(({ x }) => x)
+          .slice(0, 25)
+          .map((x, i) => ({...x, i}));
+        localStorage.setItem("data", JSON.stringify(list));
+      }
+
+      const nodeElement = q => {
+        const node = document.createElement("div");
+        node.classList.add("node");
+
+        const question = document.createElement("div");
+        question.classList.add("question")
+        question.innerText = q.question;
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.name = q.i;
+
+        input.value = q.answer;
+        if(list[q.i].answer.length > 0) {
+            node.classList.add("marked");
+          } else {
+            node.classList.remove("marked");
+          }
+        
+        input.oninput = e => {
+          list[q.i].answer = e.target.value;
+          localStorage.setItem("data", JSON.stringify(list));
+          if(list[q.i].answer.length > 0) {
+            node.classList.add("marked");
+          } else {
+            node.classList.remove("marked");
+          }
+        }
+
+        
+        node.appendChild(question);
+        node.appendChild(input)
+
+        return node;
+      }
+      
+
+      console.log(list)
+      list.forEach(q => {
+        bingoBrick.appendChild(nodeElement(q))
+      })
+    </script>
+  </body>
+</html>
